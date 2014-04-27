@@ -1,8 +1,13 @@
 package huffman;
 
 import java.awt.*;
+
 import javax.swing.*;
+
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Observer;
 import java.util.Observable;
 
@@ -25,10 +30,8 @@ public class View implements ActionListener, Observer {
 	private Model model;
 	
 	// Events
-	public static final String OPEN_COUNT = "open_count";
 	public static final String COMPRESS = "compress";
 	public static final String UNCOMPRESS = "uncompress";
-	public static final String FORCE = "force";
 	public static final String QUIT = "quit";
 	public static final String SELECT = "select";
 	
@@ -69,10 +72,6 @@ public class View implements ActionListener, Observer {
 		JMenuBar menuBar = new JMenuBar();
 		
 		// File
-		JMenuItem open_count = new JMenuItem("Open/Count");
-		open_count.setActionCommand(OPEN_COUNT);
-		open_count.addActionListener(model);
-		
 		JMenuItem compress = new JMenuItem("Compress");
 		compress.setActionCommand(COMPRESS);
 		compress.addActionListener(model);
@@ -86,22 +85,12 @@ public class View implements ActionListener, Observer {
 		quit.setActionCommand(QUIT);
 		
 		JMenu file = new JMenu("File");
-		file.add(open_count);
 		file.add(compress);
 		file.add(uncompress);
 		file.add(quit);
 		
-		// Options		
-		JMenuItem force = new JMenuItem("Force Compression");
-		force.setActionCommand(FORCE);
-		force.addActionListener(model);
-		
-		JMenu options = new JMenu("Options");
-		options.add(force);
-		
 		// Finish
 		menuBar.add(file);
-		menuBar.add(options);
 		frame.setJMenuBar(menuBar);
 	}
 	
@@ -166,41 +155,9 @@ public class View implements ActionListener, Observer {
 	
 	// ///////////////////////////////////////////////////////////////////
 	//
-	// EVENTS
+	// RESPONSES
 	// 
 	// ///////////////////////////////////////////////////////////////////
-	
-	/**
-	 * 
-	 * @param visible
-	 */
-	public void show(boolean visible) {
-		frame.setVisible(visible);
-	}
-
-	/**
-	 * 
-	 */
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		switch(e.getActionCommand()) {
-			case QUIT: {
-				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-				break;
-			}
-			case SELECT: {
-				JFileChooser chooser = new JFileChooser();
-			    int returnVal = chooser.showOpenDialog(frame);
-			    if(returnVal == JFileChooser.APPROVE_OPTION) {
-			    	String fileName = chooser.getSelectedFile().getAbsolutePath();
-			    	fileNameDisplay.setText(fileName);
-			    	model.setFileName(fileName);
-			    }
-			    
-			    break;
-			}
-		}
-	}
 	
 	/**
 	 * 
@@ -216,6 +173,49 @@ public class View implements ActionListener, Observer {
 		Tool tool = (Tool) arg;
 		output.setText(tool.getOutput());
 		message.setText(tool.getMessage());
+	}
+	
+	/**
+	 * 
+	 * @param visible
+	 */
+	public void show(boolean visible) {
+		frame.setVisible(visible);
+	}
+	
+	
+	// ///////////////////////////////////////////////////////////////////
+	//
+	// EVENTS
+	// 
+	// ///////////////////////////////////////////////////////////////////
+	
+	/**
+	 * 
+	 */
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		switch(e.getActionCommand()) {
+			case QUIT: {
+				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+				break;
+			}
+			case SELECT: {
+				selectFile();
+				break;
+			}
+		}
+	}
+	
+	private void selectFile() {
+		JFileChooser chooser = new JFileChooser();
+	    int returnVal = chooser.showOpenDialog(frame);
+	    
+	    if(returnVal == JFileChooser.APPROVE_OPTION) {
+	    	String fileName = chooser.getSelectedFile().getAbsolutePath();
+	    	fileNameDisplay.setText(fileName);
+	    	model.setFileName(fileName);
+	    }
 	}
 
 }

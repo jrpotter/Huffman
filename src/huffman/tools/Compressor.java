@@ -41,6 +41,9 @@ public class Compressor implements Tool {
 	// 
 	// ///////////////////////////////////////////////////////////////////
 	
+	/**
+	 * 
+	 */
 	@Override
 	public String getOutput() {
 		
@@ -52,6 +55,9 @@ public class Compressor implements Tool {
 		return output;
 	}
 	
+	/**
+	 * 
+	 */
 	@Override
 	public String getMessage() {
 		
@@ -107,10 +113,11 @@ public class Compressor implements Tool {
 			}
 			
 			// Write out contents of file encoded
-			for(int i = 0; i != -1; i = input.readBits(Constants.BITS_PER_WORD)) {
-				String seq = encoding.get(i);
-				output.writeBits(seq.length(), Integer.parseInt(seq, 2));
-			}
+			int inbits;
+		    while ((inbits = input.readBits(Constants.BITS_PER_WORD)) != -1) {
+		    	String seq = encoding.get(inbits);
+		    	output.writeBits(seq.length(), Integer.parseInt(seq, 2));
+		    }
 		}
 		
 		input.close();

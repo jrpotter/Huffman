@@ -45,15 +45,6 @@ public class Model extends Observable implements ActionListener {
 						break;
 					}
 					
-					case View.OPEN_COUNT: {
-						
-						break;
-					}
-					
-					case View.FORCE: {
-						
-						break;
-					}
 				}
 				
 				// Change Display

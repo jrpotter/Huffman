@@ -90,8 +90,6 @@ public class Uncompressor implements Tool {
 			buildHuffmanTree(root, encoding.get(s), s);
 		}
 		
-		root.print();
-		
 		// There is only a single value present
 		if(root.myValue != -1) {
 			for(int i = 0; i != -1; i = input.readBits(1)) {
@@ -101,19 +99,17 @@ public class Uncompressor implements Tool {
 		
 		// Read in each bit, traversing the tree as one goes
 		else {
+			int inbits;
 			TreeNode node = root;
-			for(int i = input.readBits(1); i != -1; i = input.readBits(1)) {
-				if(i == 0) node = node.myLeft;
+			while ((inbits = input.readBits(1)) != -1) {
+				if(inbits == 0) node = node.myLeft;
 				else node = node.myRight;
 				
-				if(node.myValue > 0) {
-					output.write(node.myValue);
-				}
-				
 				if(node.myValue != -1) {
+					output.write(node.myValue);
 					node = root;
 				}
-			}
+		    }
 		}
 		
 		input.close();
@@ -171,6 +167,5 @@ public class Uncompressor implements Tool {
 			buildHuffmanTree(node.myRight, value, path.substring(1));
 		}
 	}
-	
 
 }

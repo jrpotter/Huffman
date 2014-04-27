@@ -58,14 +58,4 @@ public class TreeNode implements Comparable<TreeNode> {
 
         return myWeight - rhs.myWeight;
     }
-    
-    public void print() {
-    	print("");
-    }
-    
-    public void print(String tab) {
-    	System.out.println(tab + myValue);
-    	if(myLeft != null) myLeft.print(tab + "0:  ");
-    	if(myRight != null) myRight.print(tab + "1:  ");
-    }
 }
