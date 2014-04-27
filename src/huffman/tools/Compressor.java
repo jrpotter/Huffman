@@ -87,13 +87,22 @@ public class Compressor implements Tool {
 			
 			// Write out header
 			output.writeBits(Constants.BITS_PER_INT, Constants.MAGIC_NUMBER);
+			
+			// Tells how many entries are in the Huffman Tree
 			output.writeBits(Constants.BITS_PER_INT, encoding.size());
+			
+			// Begins writing out the values of each word
 			for(Integer i : encoding.keySet()) {
 				String seq = encoding.get(i);
 				int iseq = Integer.parseInt(seq, 2);
 				
+				// The value
 				output.writeBits(Constants.BITS_PER_WORD, i);
+				
+				// The length of the sequence
 				output.writeBits(Constants.BITS_PER_WORD, seq.length());
+				
+				// The sequence
 				output.writeBits(Constants.BITS_PER_INT, iseq);
 			}
 			

@@ -142,10 +142,13 @@ public class View implements ActionListener, Observer {
 		c.fill = GridBagConstraints.BOTH;
 		
 		output = new JTextArea();
-		output.setEditable(false);
-		output.setBorder(BorderFactory.createTitledBorder("Output"));
+		JScrollPane scrollPane = new JScrollPane();
 		
-		frame.getContentPane().add(output, c);
+		output.setEditable(false);
+		scrollPane.getViewport().add(output);
+		scrollPane.setBorder(BorderFactory.createTitledBorder("Output"));
+		
+		frame.getContentPane().add(scrollPane, c);
 		
 		// Messages
 		c.gridwidth = 2;

@@ -7,11 +7,14 @@ import huffman.Constants;
 import huffman.tools.Tool;
 import huffman.lib.TreeNode;
 import huffman.io.BitInputStream;
+import huffman.io.BitOutputStream;
 
 public class Uncompressor implements Tool {
 	
+	private String destination;
 	private BitInputStream input;
-	private HashMap<Integer, String> encoding;
+	private BitOutputStream output;
+	private HashMap<String, Integer> encoding;
 	
 	
 	// ///////////////////////////////////////////////////////////////////
@@ -24,9 +27,17 @@ public class Uncompressor implements Tool {
 	 * 
 	 * @param fileName
 	 */
-	public Uncompressor(String fileName) {
+	public Uncompressor(String fileName) throws IOException {
+		
+		int e_pos = fileName.lastIndexOf(".hf");
+		if(e_pos == -1) {
+			throw new IOException("File is not of type '.hf'");
+		}
+		
 		encoding = new HashMap<>();
 		input = new BitInputStream(fileName);
+		destination = fileName.substring(0, e_pos);
+		output = new BitOutputStream(destination);
 	}
 	
 	
@@ -43,8 +54,8 @@ public class Uncompressor implements Tool {
 	public String getOutput() {
 		
 		String output = "";
-		for(Integer i : encoding.keySet()) {
-			output += i + " : " + encoding.get(i) + "\n";
+		for(String s : encoding.keySet()) {
+			output += s + " : " + encoding.get(s) + "\n";
 		}
 
 		return output;
@@ -56,7 +67,7 @@ public class Uncompressor implements Tool {
 	@Override
 	public String getMessage() {
 
-		return null;
+		return "Written to file: " + destination;
 	}
 	
 	
@@ -75,12 +86,38 @@ public class Uncompressor implements Tool {
 		// Rebuild decoding table and Huffman tree
 		decode();
 		TreeNode root = new TreeNode(-1, -1);
-		for(Integer i : encoding.keySet()) {
-			buildHuffmanTree(root, i, encoding.get(i));
+		for(String s : encoding.keySet()) {
+			buildHuffmanTree(root, encoding.get(s), s);
 		}
 		
+		root.print();
 		
+		// There is only a single value present
+		if(root.myValue != -1) {
+			for(int i = 0; i != -1; i = input.readBits(1)) {
+				System.out.println((char) root.myValue);
+			}
+		} 
 		
+		// Read in each bit, traversing the tree as one goes
+		else {
+			TreeNode node = root;
+			for(int i = input.readBits(1); i != -1; i = input.readBits(1)) {
+				if(i == 0) node = node.myLeft;
+				else node = node.myRight;
+				
+				if(node.myValue > 0) {
+					output.write(node.myValue);
+				}
+				
+				if(node.myValue != -1) {
+					node = root;
+				}
+			}
+		}
+		
+		input.close();
+		output.close();
 	}
 	
 	/**
@@ -108,7 +145,7 @@ public class Uncompressor implements Tool {
 				bin_string = "0" + bin_string;
 			}
 			
-			encoding.put(word, bin_string);
+			encoding.put(bin_string, word);
 		}
 	}
 
@@ -130,7 +167,7 @@ public class Uncompressor implements Tool {
 			if(node.myLeft == null) node.myLeft = new TreeNode(-1, -1);
 			buildHuffmanTree(node.myLeft, value, path.substring(1));
 		} else {
-			node.myRight = new TreeNode(-1, -1);
+			if(node.myRight == null) node.myRight = new TreeNode(-1, -1);
 			buildHuffmanTree(node.myRight, value, path.substring(1));
 		}
 	}
