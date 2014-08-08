@@ -7,6 +7,13 @@ The following is a graphical implementation of the huffman encoding compression 
 extra credit in one of my computer science classes. The program appears to work with the various files tested, 
 though this testing was not rigorously performed.
 
-Use with caution!
+It enables selection of files to compress; it will also display the compression table and decompression table during compression and decompression of files respectively.
 
-There will be no future updates.
+To run:
+```
+git clone https://github.com/jrpotter/Huffman.git
+cd Huffman/bin
+java huffman.Main
+```
+
+![alt tag](https://raw.githubusercontent.com/jrpotter/Huffman/master/screenshot.png)
