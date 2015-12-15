@@ -11,7 +11,9 @@ though this testing was not rigorously performed.
 
 It enables selection of files to compress; it will also display the compression table and decompression table during compression and decompression of files respectively.
 
-To run:
+Quickstart
+----------
+
 ```
 git clone https://github.com/jrpotter/Huffman.git
 cd Huffman/bin
